@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 '''draw the pascal triangle'''
 
+
 def pascal_triangle(n):
     '''function to create the triangle'''
     the_list = []
