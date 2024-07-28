@@ -12,5 +12,4 @@ def pascal_triangle(n):
                 row.append(the_list[i-1][j-1] + the_list[i-1][j])
             row.append(1)
         the_list.append(row)
-    for row in the_list:
-        print(row)
+    return the_list
