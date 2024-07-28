@@ -1,9 +1,10 @@
 #!/usr/bin/python3
-"""draw the pascal triangle"""
+'''draw the pascal triangle'''
 
 def pascal_triangle(n):
+    '''function to create the triangle'''
     the_list = []
-    if n <= 0:
+    if type(n) is not int or n <= 0:
         return the_list
     for i in range(n):
         row = [1]
