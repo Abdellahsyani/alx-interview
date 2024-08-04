@@ -14,11 +14,13 @@ def canUnlockAll(boxes):
     n = len(boxes)
     visited = [False] * n
     visited[0] = True  # First box is unlocked
+    queue = [0]  # Initialize a queue with the initial unlocked box
 
-    def dfs(box_index):
-        for key in boxes[box_index]:
+    while queue:
+        current_box = queue.pop(0)
+        for key in boxes[current_box]:
             if 0 <= key < n and not visited[key]:
                 visited[key] = True
-                dfs(key)
-    dfs(0)
+                queue.append(key)
+
     return all(visited)
