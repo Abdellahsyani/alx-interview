@@ -3,38 +3,30 @@
 
 
 def validUTF8(data):
-    # Number of bytes to process for the current character
+    # Number of bytes left to process in the current UTF-8 character
     bytes_to_process = 0
 
-    # Masks to check the first byte
-    mask1 = 1 << 7   # 10000000
-    mask2 = 1 << 6   # 01000000
-
     for num in data:
-        # Mask out the first 8 bits
+        # Get only the last 8 bits of the number
         byte = num & 0xFF
 
         if bytes_to_process == 0:
-            # Determine how many bytes this character should have
-            if byte & mask1 == 0:
-                # 1-byte character (starts with 0xxxxxxx)
-                continue
-            elif byte & mask1 and byte & mask2 == 0:
-                # Invalid pattern (starts with 10xxxxxx)
-                return False
-            elif byte & (mask1 >> 1) == mask1:
-                bytes_to_process = 3
-            elif byte & (mask1 >> 2) == mask1 >> 1:
-                bytes_to_process = 2
-            elif byte & (mask1 >> 3) == mask1 >> 2:
+            # Determine how many bytes the character should have
+            if (byte >> 5) == 0b110:  # 110xxxxx -> 2-byte character
                 bytes_to_process = 1
+            elif (byte >> 4) == 0b1110:  # 1110xxxx -> 3-byte character
+                bytes_to_process = 2
+            elif (byte >> 3) == 0b11110:  # 11110xxx -> 4-byte character
+                bytes_to_process = 3
+            elif (byte >> 7) == 0b0:  # 0xxxxxxx -> 1-byte character (ASCII)
+                continue
             else:
                 return False
         else:
-            # Check that the byte is a valid continuation byte
-            if not (byte & mask1 and not (byte & mask2)):
+            # For continuation bytes, check if they start with 10xxxxxx
+            if (byte >> 6) != 0b10:
                 return False
             bytes_to_process -= 1
 
-    # If we have processed all bytes correctly, bytes_to_process should be 0
+    # If all bytes have been correctly processed, bytes_to_process should be 0
     return bytes_to_process == 0
