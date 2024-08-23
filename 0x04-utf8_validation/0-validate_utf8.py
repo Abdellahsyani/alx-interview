@@ -3,36 +3,38 @@
 
 
 def validUTF8(data):
-    """
-    Validate if a list of integers represents a valid UTF-8 encoding.
-    """
-    n = len(data)
-    i = 0
+    # Number of bytes to process for the current character
+    bytes_to_process = 0
 
-    while i < n:
-        byte = data[i]
-        if byte < 0 or byte > 255:
-            return False
+    # Masks to check the first byte
+    mask1 = 1 << 7   # 10000000
+    mask2 = 1 << 6   # 01000000
 
-        if byte & 0b10000000 == 0:
-            i += 1
-        elif byte & 0b11100000 == 0b11000000:
-            if i + 1 >= n or data[i + 1] & 0b11000000 != 0b10000000:
+    for num in data:
+        # Mask out the first 8 bits
+        byte = num & 0xFF
+
+        if bytes_to_process == 0:
+            # Determine how many bytes this character should have
+            if byte & mask1 == 0:
+                # 1-byte character (starts with 0xxxxxxx)
+                continue
+            elif byte & mask1 and byte & mask2 == 0:
+                # Invalid pattern (starts with 10xxxxxx)
                 return False
-            i += 2
-        elif byte & 0b11110000 == 0b11100000:
-            if i + 2 >= n or not (data[i + 1]
-               & 0b11000000 == 0b10000000 and data[i + 2]
-               & 0b11000000 == 0b10000000):
+            elif byte & (mask1 >> 1) == mask1:
+                bytes_to_process = 3
+            elif byte & (mask1 >> 2) == mask1 >> 1:
+                bytes_to_process = 2
+            elif byte & (mask1 >> 3) == mask1 >> 2:
+                bytes_to_process = 1
+            else:
                 return False
-            i += 3
-        elif byte & 0b11111000 == 0b11110000:
-            if i + 3 >= n or not (data[i + 1] & 0b11000000 == 0b10000000
-               and data[i + 2] & 0b11000000 == 0b10000000 and data[i + 3]
-               & 0b11000000 == 0b10000000):
-                return False
-            i += 4
         else:
-            return False
+            # Check that the byte is a valid continuation byte
+            if not (byte & mask1 and not (byte & mask2)):
+                return False
+            bytes_to_process -= 1
 
-    return True
+    # If we have processed all bytes correctly, bytes_to_process should be 0
+    return bytes_to_process == 0
