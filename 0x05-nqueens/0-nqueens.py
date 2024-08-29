@@ -30,6 +30,7 @@ def is_safe(board, row, col, n):
 
     return True
 
+
 def solve_nqueens_util(board, row, n, solutions):
     """Utility function to solve the N-Queens problem."""
     if row == n:
@@ -53,12 +54,14 @@ def solve_nqueens_util(board, row, n, solutions):
             # Backtrack: Remove the queen
             board[row][col] = 0
 
+
 def solve_nqueens(n):
     """Solve the N-Queens problem."""
     board = [[0 for _ in range(n)] for _ in range(n)]
     solutions = []
     solve_nqueens_util(board, 0, n, solutions)
     return solutions
+
 
 def main():
     """Main function to parse arguments and solve the N-Queens problem."""
@@ -80,6 +83,7 @@ def main():
     solutions = solve_nqueens(n)
     for solution in solutions:
         print(solution)
+
 
 if __name__ == "__main__":
     main()
