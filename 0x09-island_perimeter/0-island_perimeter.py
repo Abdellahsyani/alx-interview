@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+""" try to count the island space
+"""
 
 
 def island_perimeter(grid):
-    """count the space of the island
+    """Island space counting
     """
     perimeter = 0
     for row in range(len(grid)):
