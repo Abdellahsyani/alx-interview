@@ -20,6 +20,6 @@ def island_perimeter(grid):
                 if (col == len(grid[0]) - 1 or grid[row][col + 1] == 0):
                     perimeter += 1
                 # check the buttom side of the land
-                if (row == len(grid[0]) - 1 or grid[row + 1][col] == 0):
+                if (row == len(grid) - 1 or grid[row + 1][col] == 0):
                     perimeter += 1
     return (perimeter)
